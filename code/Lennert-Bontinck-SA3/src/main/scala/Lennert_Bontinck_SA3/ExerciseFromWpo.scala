@@ -1,8 +1,8 @@
-package agg
+package Lennert_Bontinck_SA3
 
 import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props}
 
-object AggExercise extends App {
+object ExerciseFromWpo extends App {
 
   // Validity Messages
   trait Validity
