@@ -28,7 +28,7 @@ This is the GitHub repository for the third and last assignment of the Software 
 - For this project, the following version of base software are used (same as WPOs)
   - JRE and JDK 1.8.291
   - sbt 1.3.13
-- The sbt build will provide XXX
+- The sbt build will provide the required dependencies which are the same as the one from the last exercise session (11).
 
 ## Running the code
 
