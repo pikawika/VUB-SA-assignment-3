@@ -39,6 +39,8 @@ This is the GitHub repository for the third and last assignment of the Software 
 
 ## Validated output
 
+Note that in the main file you can specify which flow you would like to see by changing the provided Boolean variables.
+
 ### Add stock houses
 
 It is possible to add stock houses by message, which will store the actorref in the processingService, as a named actor object. It is checked that no identical stock house is added (stock house on same address). See below, note naming includes address, which is represented by an x and y point! See the output below in the first "paused" block of logging from the main loop.
@@ -57,7 +59,7 @@ It is possible through messages to add products to a warehouse. Again, there is 
 
 In the final block of the main loop logging, multiple purchases are performed. In the screenshot below, a fullfilable order is shown. This clearly demonstrates the flow of the application.
 
-This output is achieved by only placing order for productList1.
+This output is achieved by using displayOnlyASingleOrderShippedProcess = true.
 
 ![Succesfull order processing: OrderShipped](screenshots/orderShipped.png)
 
@@ -65,6 +67,14 @@ This output is achieved by only placing order for productList1.
 
 In the final block of the main loop logging, multiple purchases are performed. In the screenshot below, a non fullfilable order is shown. This clearly demonstrates the flow of the application to contact all stock houses and then fail to fullfill order since all stock houses (5 closest) are asked to fulfill order and there is a list of items remaining to be fulfilled.
 
-This output is achieved by only placing order for productList1 and changing the quantity of a product requested to 100.
+This output is achieved by using displayOnlyASingleOrderDelayedProcess = true.
 
 ![Succesfull order processing: OrderShipped](screenshots/orderShipped.png)
+
+### Succesfull order processing: OrderShipped for many order
+
+Below is the output of running the code for 7 orders of which some contain 5+ differing products, all work as expected, see that multiple actors finish in a non synchronic order.
+
+This output is achieved by using displayAll = true.
+
+![Succesfull order processing: OrderShipped](screenshots/orderAll.png)

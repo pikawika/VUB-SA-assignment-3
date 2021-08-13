@@ -43,7 +43,6 @@ object Main extends App {
   val client5: Client = Client("Coen", address5, primeMember = false)
   val client6: Client = Client("Johan", address6, primeMember = false)
   val client7: Client = Client("Kris", address7, primeMember = false)
-  val client8: Client = Client("Peter", address8, primeMember = false)
 
   // Create some client actors
   val clientActor1: ActorRef = actorSystem.actorOf(Props(new ClientService(client1, processingService)), name = client1.name)
@@ -53,7 +52,6 @@ object Main extends App {
   val clientActor5: ActorRef = actorSystem.actorOf(Props(new ClientService(client5, processingService)), name = client5.name)
   val clientActor6: ActorRef = actorSystem.actorOf(Props(new ClientService(client6, processingService)), name = client6.name)
   val clientActor7: ActorRef = actorSystem.actorOf(Props(new ClientService(client7, processingService)), name = client7.name)
-  val clientActor8: ActorRef = actorSystem.actorOf(Props(new ClientService(client8, processingService)), name = client8.name)
 
   // Create some stock houses
   val stockHouse1: StockHouse = StockHouse(address1)
@@ -131,10 +129,71 @@ object Main extends App {
   //| START PLACING PURCHASES
   //---------------------------------------------------------------------------
 
-  // Make some purchases
-  val productList1: List[ProductWithQuantity] = List(
-    ProductWithQuantity(macbookProduct, 2),
-    ProductWithQuantity(playstationProduct, 5))
+  // Make some purchases (7 in total with last having many products - all works as expected)
+  // If you want to see the main flow in an easy manner, please configure the below variables
+  // NOTE: only one bool may be true!
+  val displayOnlyASingleOrderShippedProcess: Boolean = false
+  val displayOnlyASingleOrderDelayedProcess: Boolean = false
+  val displayAll: Boolean = true
 
-  clientActor1 ! PurchasePlaced(Purchase(productList1, client1))
+
+  if (displayOnlyASingleOrderShippedProcess || displayAll) {
+    val productList1: List[ProductWithQuantity] = List(
+      ProductWithQuantity(macbookProduct, 2),
+      ProductWithQuantity(playstationProduct, 5))
+
+    clientActor1 ! PurchasePlaced(Purchase(productList1, client1))
+  }
+
+  if (displayAll) {
+    val productList2: List[ProductWithQuantity] = List(
+      ProductWithQuantity(graphicsCardProduct, 1),
+      ProductWithQuantity(playstationProduct, 1))
+
+    clientActor2 ! PurchasePlaced(Purchase(productList2, client2))
+
+    val productList3: List[ProductWithQuantity] = List(
+      ProductWithQuantity(macbookProduct, 1),
+      ProductWithQuantity(imacProduct, 1))
+
+    clientActor3 ! PurchasePlaced(Purchase(productList3, client3))
+
+    val productList4: List[ProductWithQuantity] = List(
+      ProductWithQuantity(iphoneProduct, 1),
+      ProductWithQuantity(samsungPhoneProduct, 1))
+
+    clientActor4 ! PurchasePlaced(Purchase(productList4, client4))
+
+    val productList5: List[ProductWithQuantity] = List(
+      ProductWithQuantity(iphoneProduct, 1),
+      ProductWithQuantity(samsungPhoneProduct, 1))
+
+    clientActor5 ! PurchasePlaced(Purchase(productList5, client5))
+
+    val productList6: List[ProductWithQuantity] = List(
+      ProductWithQuantity(hpLaptop, 1))
+
+    clientActor6 ! PurchasePlaced(Purchase(productList6, client6))
+
+    // One long order requesting many items
+    val productList7: List[ProductWithQuantity] = List(
+      ProductWithQuantity(graphicsCardProduct, 1),
+      ProductWithQuantity(playstationProduct, 1),
+      ProductWithQuantity(macbookProduct, 1),
+      ProductWithQuantity(imacProduct, 1),
+      ProductWithQuantity(iphoneProduct, 1),
+      ProductWithQuantity(samsungPhoneProduct, 1),
+      ProductWithQuantity(hpLaptop, 1))
+
+    clientActor7 ! PurchasePlaced(Purchase(productList7, client7))
+  }
+
+  if (displayOnlyASingleOrderDelayedProcess) {
+    val productList8: List[ProductWithQuantity] = List(
+      ProductWithQuantity(macbookProduct, 100))
+
+    clientActor1 ! PurchasePlaced(Purchase(productList8, client1))
+  }
+
+  // If you want to see a OrderDelayed, please execute the code below in standalone
 }
