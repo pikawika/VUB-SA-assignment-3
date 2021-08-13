@@ -35,8 +35,36 @@ This is the GitHub repository for the third and last assignment of the Software 
 - Open the build.sbt file available under code\Lennert-Bontinck-SA3\build.sbt with the IntelliJ IDEA.
 - Select Open as Project and select Trust Project.
 - The IntelliJ IDEA should build the build.sbt file providing the dependencies. If all base software was installed with the same versions as used for this assignment, it should provide the correct SDKs as well.
-- XXX
+- Rightclick on ```main```under ```src/main/scala/Lennert_Bontinck_SA3```, and select ```run Main```. The main file will now run which will process some requests.
 
 ## Validated output
 
-XXX
+### Add stock houses
+
+It is possible to add stock houses by message, which will store the actorref in the processingService, as a named actor object. It is checked that no identical stock house is added (stock house on same address). See below, note naming includes address, which is represented by an x and y point! See the output below in the first "paused" block of logging from the main loop.
+
+The seperation between business logic and communication logic, as specified by the domain-object pattern, is clear here, the service does keep a list of actorref's but the business logic object keeps the actual stock houses.
+
+![Add stock house confirmations](screenshots/addStockHouses.png)
+
+### Add products
+
+It is possible through messages to add products to a warehouse. Again, there is clear seperation of communication and business logic. See output of the second "paused" blcok of logging from the main loop.
+
+![Add products confirmations](screenshots/addProducts.png)
+
+### Succesfull order processing: OrderShipped
+
+In the final block of the main loop logging, multiple purchases are performed. In the screenshot below, a fullfilable order is shown. This clearly demonstrates the flow of the application.
+
+This output is achieved by only placing order for productList1.
+
+![Succesfull order processing: OrderShipped](screenshots/orderShipped.png)
+
+### Succesfull order processing: OrderDelayed
+
+In the final block of the main loop logging, multiple purchases are performed. In the screenshot below, a non fullfilable order is shown. This clearly demonstrates the flow of the application to contact all stock houses and then fail to fullfill order since all stock houses (5 closest) are asked to fulfill order and there is a list of items remaining to be fulfilled.
+
+This output is achieved by only placing order for productList1 and changing the quantity of a product requested to 100.
+
+![Succesfull order processing: OrderShipped](screenshots/orderShipped.png)

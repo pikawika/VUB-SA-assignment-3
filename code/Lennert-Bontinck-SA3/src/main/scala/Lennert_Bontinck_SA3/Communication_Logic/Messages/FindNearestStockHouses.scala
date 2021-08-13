@@ -5,5 +5,6 @@ import akka.actor.ActorRef
 
 import java.util.UUID
 
-/** Case class that represents a request message to find the nearest stock houses from a given address. */
+/** Case class that represents a request message to find the nearest stock houses from a given address.
+ * CorrID used since working with ephemeral child actors. */
 case class FindNearestStockHouses(address: Address, replyTo: ActorRef, corrID: UUID, amountOfStockHouses: Int = 5)

@@ -7,8 +7,7 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 
 object Main extends App {
 
-  // Todo: this should run example code. Make sure that your solution supports at least 5 products being requested concurrently,
-  //  and write some code demonstrating this capability of your solution. Additionally, your
+  // Todo: Additionally, your
   //  Client class should include an attribute indicating whether a client has subscribed to
   //  Prime services. Your implementation should prioritise purchases from clients that have
   //  subscribed to Prime. Purchases from other clients should be processed normally
@@ -16,7 +15,7 @@ object Main extends App {
   //---------------------------------------------------------------------------
   //| START SETTING UP ENVIRONMENT
   //---------------------------------------------------------------------------
-  val debugReadingTime: Int = 100
+  val debugReadingTime: Int = 3000
 
   // Make an actor system
   val actorSystem: ActorSystem = ActorSystem("LennertBontinckSystem")
@@ -135,7 +134,7 @@ object Main extends App {
   // Make some purchases
   val productList1: List[ProductWithQuantity] = List(
     ProductWithQuantity(macbookProduct, 2),
-    ProductWithQuantity(playstationProduct, 3))
+    ProductWithQuantity(playstationProduct, 100))
 
   clientActor1 ! PurchasePlaced(Purchase(productList1, client1))
 }

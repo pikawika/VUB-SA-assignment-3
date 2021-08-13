@@ -9,7 +9,7 @@ case class Purchase(products: List[ProductWithQuantity], client: Client) {
   //---------------------------------------------------------------------------
 
   /** Keep a list of items that are not yet fulfilled for the purchase */
-  var remainingProducts = products.toSet
+  var remainingProducts: Set[ProductWithQuantity] = products.toSet
 
   //---------------------------------------------------------------------------
   //| END PRIVATE VARS
@@ -23,10 +23,10 @@ case class Purchase(products: List[ProductWithQuantity], client: Client) {
       val itemIsProvided: Boolean = suppliedProductsWithQuantity.exists(_.product.name == remainingProduct.product.name)
 
       if(itemIsProvided) {
-        // remove item from remaining products
+        // Remove item from remaining products
         remainingProducts = remainingProducts - remainingProduct
 
-        // determine if it was only partial fulfillment because then it needs re-adding with new quantity
+        // Determine if it was only partial fulfillment because then it needs re-adding with new quantity
         val providedProduct = suppliedProductsWithQuantity.filter(_.product.name == remainingProduct.product.name).head
         val remainingQuantity = remainingProduct.quantity - providedProduct.quantity
         if(remainingQuantity > 0) {

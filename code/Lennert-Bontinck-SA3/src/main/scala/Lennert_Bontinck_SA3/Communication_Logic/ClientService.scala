@@ -7,6 +7,7 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 
 import java.util.UUID
 
+/** Actor for the managing communication of a client. */
 class ClientService(val client: Client, processingServiceActor: ActorRef) extends Actor with ActorLogging{
 
   //---------------------------------------------------------------------------
@@ -26,14 +27,14 @@ class ClientService(val client: Client, processingServiceActor: ActorRef) extend
   //| START PURCHASE PLACING FUNCTIONS
   //---------------------------------------------------------------------------
 
-  // DONE (?)
+  /** Function to process a PurchasePlaced message. */
   private def purchasePlaced(purchase: Purchase): Unit = {
     // Add to business logic
     client.addPurchase(purchase)
-    // Create Ephemeral child responsible for further handling this purchase
+    // Create ephemeral child responsible for further handling this purchase
     val corrID = UUID.randomUUID()
     val childActor = context.actorOf(Props(new ClientChildService(corrID)))
-    // Sent PurchaseConfirmed message to processing service actor with child as reply
+    // Sent PurchaseConfirmed message to processing service actor with ephemeral child as reply
     processingServiceActor ! PurchaseConfirmed(purchase, corrID, childActor)
     log.info("ClientService: received PurchasePlaced, registered purchase, created ephemeral child and sent PurchaseConfirmed.")
   }

@@ -10,6 +10,7 @@ case class ProductWithQuantity(product: Product,
   //---------------------------------------------------------------------------
   //| START QUANTITY MANAGEMENT FUNCTIONS
   //---------------------------------------------------------------------------
+
   /** Function to add quantity to ProductWithQuantity object.
    * If negative or zero is supplied object remains the same. */
   def addQuantity(quantityToAdd: Int): ProductWithQuantity =
@@ -31,7 +32,6 @@ case class ProductWithQuantity(product: Product,
     } else {
       this
     }
-
 
   //---------------------------------------------------------------------------
   //| END QUANTITY MANAGEMENT FUNCTIONS

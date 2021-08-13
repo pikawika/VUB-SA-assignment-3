@@ -6,7 +6,7 @@ case class StockHouseManager() {
   //---------------------------------------------------------------------------
   //| START PRIVATE VARS
   //---------------------------------------------------------------------------
-  // Keep products in stock as private var
+  /** Keep products in stock as private var */
   private var stockHouses: Set[StockHouse] = Set()
 
   //---------------------------------------------------------------------------
@@ -29,7 +29,8 @@ case class StockHouseManager() {
   //| START STOCK HOUSE MANAGEMENT FUNCTIONS
   //---------------------------------------------------------------------------
 
-  /** Function to add specific stock house to the manager. */
+  /** Function to add specific stock house to the manager.
+   * If stock house already existed (same address), nothing happens and false is returned, else true is returned. */
   def addStockHouse(newStockHouse: StockHouse): Boolean = {
     // check if stock house already exists
     val stockHouseExists = stockHouses.exists(_.address == newStockHouse.address)
@@ -42,7 +43,6 @@ case class StockHouseManager() {
     // return true if stock house didn't exist and thus has been added
     !stockHouseExists
   }
-
 
   //---------------------------------------------------------------------------
   //| END STOCK HOUSE MANAGEMENT FUNCTIONS

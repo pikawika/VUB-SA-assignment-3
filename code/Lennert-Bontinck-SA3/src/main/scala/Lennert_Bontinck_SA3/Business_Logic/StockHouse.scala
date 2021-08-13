@@ -7,7 +7,7 @@ case class StockHouse(address: Address) {
   //---------------------------------------------------------------------------
   //| START PRIVATE VARS
   //---------------------------------------------------------------------------
-  // Keep products in stock as private var
+  /** Keep products in stock as private var. */
   private var products: Set[ProductWithQuantity] = Set()
 
   //---------------------------------------------------------------------------
@@ -34,11 +34,11 @@ case class StockHouse(address: Address) {
     val productExists = products.exists(_.product.name == newProduct.product.name)
 
     if (productExists) {
-      // add stock quantity to existing stock
+      // Add stock quantity to existing stock
       val productFromStock = products.filter(_.product.name == newProduct.product.name).head
       productFromStock.addQuantity(newProduct.quantity)
     } else {
-      // just add new product
+      // Just add new product
       products = products + newProduct
     }
   }
@@ -49,15 +49,20 @@ case class StockHouse(address: Address) {
   //| START ORDER FULFILLMENT MESSAGES
   //---------------------------------------------------------------------------
 
+  /** Function that provides the products that can be supplied of those requested.
+   * May only provide a certain amount (lesser then) the requested amount of a product or no products at all. */
   def provideAvailableProductsForPurchase(requestedProductsWithQuantity: Set[ProductWithQuantity]): Set[ProductWithQuantity] = {
     // Keep track of the products supplied for filling the order
     var collectedProducts: Set[ProductWithQuantity] = Set()
 
+    // Loop over all requested products to check if we can supply them
     for (requestedProduct <- requestedProductsWithQuantity) {
+      // Determine if product is available, i.e. stock is more then 0
       val isAvailableInStock: Boolean = products.exists(pwc => pwc.product.name == requestedProduct.product.name
         && pwc.quantity > 0)
 
       if(isAvailableInStock) {
+        // Check if all requested amount of this product can be provided
         val productFromStock: ProductWithQuantity = products.filter(_.product.name == requestedProduct.product.name).head
         val canFullFilFully: Boolean = productFromStock.quantity - requestedProduct.quantity >= 0
 
@@ -69,7 +74,7 @@ case class StockHouse(address: Address) {
         } else {
           // Determine available amount
           val availableQuantityToDeliver: Int = productFromStock.quantity
-          // Remove all available amount from stock, i.e. remove product from stock entirely
+          // Collect the products, i.e. remove product from stock entirely since all stock goes to this order
           products = products - productFromStock
           // Add requested product with lesser amount to collected products (partially fulfilled)
           collectedProducts = collectedProducts + ProductWithQuantity(productFromStock.product, availableQuantityToDeliver)

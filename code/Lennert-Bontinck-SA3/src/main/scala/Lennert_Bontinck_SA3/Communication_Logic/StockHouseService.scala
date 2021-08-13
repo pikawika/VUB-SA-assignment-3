@@ -6,6 +6,7 @@ import akka.actor.{Actor, ActorLogging, ActorRef}
 
 import java.util.UUID
 
+/** Actor for the managing communication of a stock house. */
 class StockHouseService(stockHouse: StockHouse) extends Actor with ActorLogging {
 
   /** Receive function which processes incoming messages (Actor specific function). */
@@ -23,6 +24,7 @@ class StockHouseService(stockHouse: StockHouse) extends Actor with ActorLogging 
     "StockHouse-X_" + stockHouse.address.x.toString + "-Y_" + stockHouse.address.y.toString
   }
 
+  /** Function to process a FillOrder message. */
   private def fillOrder(requestedProductsWithQuantity: Set[ProductWithQuantity], corrID: UUID, replyTo: ActorRef): Unit = {
     // Get products from stock in business logic
     val collectedProducts = stockHouse.provideAvailableProductsForPurchase(requestedProductsWithQuantity)

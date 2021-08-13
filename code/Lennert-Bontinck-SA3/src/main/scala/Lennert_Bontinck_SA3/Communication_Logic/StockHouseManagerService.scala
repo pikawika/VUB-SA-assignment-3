@@ -1,14 +1,18 @@
 package Lennert_Bontinck_SA3.Communication_Logic
 
 import Lennert_Bontinck_SA3.Business_Logic.{Address, ProductWithQuantity, StockHouse, StockHouseManager}
+import Lennert_Bontinck_SA3.Communication_Logic.Helper_Classes.NamedActor
 import Lennert_Bontinck_SA3.Communication_Logic.Messages._
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 
 import java.util.UUID
 
+/** Actor for the managing communication of the stock house manager. */
 class StockHouseManagerService(stockHouseManager: StockHouseManager) extends Actor with ActorLogging {
 
-  /** Keep a list of all stock house actors so right one can be forwarded. */
+  /** Keep a list of all stock house actors so right one can be forwarded.
+   * NOTE: use of var in actor might trigger a warning in IntelliJ,
+   * however, using a var is acceptable here as per: https://stackoverflow.com/a/18810678 */
   private var stockHouseServices: Set[NamedActor] = Set()
 
 
@@ -27,7 +31,7 @@ class StockHouseManagerService(stockHouseManager: StockHouseManager) extends Act
       addStockHouse(newStockHouse)
 
     case AddProductToStockHouseDummy(stockHouse: StockHouse, productWithQuantity: ProductWithQuantity) =>
-      // Dummy function to be able to add products from main application without being an actor
+      // "Dummy" function to be able to add products from main application without being an actor, should not be needed "IRL"
       getNamedActorForStockHouse(stockHouse).actorRef ! AddProductToStockHouse(productWithQuantity)
   }
   //---------------------------------------------------------------------------
@@ -36,7 +40,7 @@ class StockHouseManagerService(stockHouseManager: StockHouseManager) extends Act
   //| START ACTOR FINDER FUNCTIONS
   //---------------------------------------------------------------------------
 
-  /** Determines the name of an stock house actor by assuming unique address. */
+  /** Determines the name of a stock house actor by assuming unique address. */
   private def determineNameOfStockHouseActor(stockHouse: StockHouse): String = {
     "StockHouse-X_" + stockHouse.address.x.toString + "-Y_" + stockHouse.address.y.toString
   }
@@ -85,7 +89,7 @@ class StockHouseManagerService(stockHouseManager: StockHouseManager) extends Act
       // Keep actor refs for messaging
       val newActorRef: ActorRef = context.actorOf(
         Props(new StockHouseService(newStockHouse)), name = nameOfNewActor)
-      stockHouseServices = stockHouseServices + NamedActor(nameOfNewActor, newActorRef)
+      stockHouseServices = stockHouseServices + Helper_Classes.NamedActor(nameOfNewActor, newActorRef)
       log.info(nameOfNewActor + " added!")
     } else {
       log.info(nameOfNewActor + " not added, the stock house most likely already existed")
