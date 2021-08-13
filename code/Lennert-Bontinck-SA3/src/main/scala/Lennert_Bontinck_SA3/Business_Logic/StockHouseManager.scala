@@ -30,7 +30,7 @@ case class StockHouseManager() {
   //---------------------------------------------------------------------------
 
   /** Function to add specific stock house to the manager. */
-  def addStockHouse(newStockHouse: StockHouse): Unit = {
+  def addStockHouse(newStockHouse: StockHouse): Boolean = {
     // check if stock house already exists
     val stockHouseExists = stockHouses.exists(_.address == newStockHouse.address)
 
@@ -38,6 +38,9 @@ case class StockHouseManager() {
     if (!stockHouseExists) {
       stockHouses = stockHouses + newStockHouse
     }
+
+    // return true if stock house didn't exist and thus has been added
+    !stockHouseExists
   }
 
 
