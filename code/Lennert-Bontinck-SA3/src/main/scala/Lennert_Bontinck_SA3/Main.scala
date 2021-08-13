@@ -1,8 +1,8 @@
 package Lennert_Bontinck_SA3
 
-import Lennert_Bontinck_SA3.Business_Logic.{Address, Client, Product, ProductWithQuantity, StockHouse, StockHouseManager}
-import Lennert_Bontinck_SA3.Communication_Logic.Messages.{AddProductToStockHouseDummy, AddStockHouse}
-import Lennert_Bontinck_SA3.Communication_Logic.{ClientService, StockHouseManagerService}
+import Lennert_Bontinck_SA3.Business_Logic.{Address, Client, Product, ProductWithQuantity, Purchase, StockHouse, StockHouseManager}
+import Lennert_Bontinck_SA3.Communication_Logic.Messages.{AddProductToStockHouseDummy, AddStockHouse, PurchasePlaced}
+import Lennert_Bontinck_SA3.Communication_Logic.{ClientService, ProcessingService, StockHouseManagerService}
 import akka.actor.{ActorRef, ActorSystem, Props}
 
 object Main extends App {
@@ -13,9 +13,18 @@ object Main extends App {
   //  Prime services. Your implementation should prioritise purchases from clients that have
   //  subscribed to Prime. Purchases from other clients should be processed normally
 
+  //---------------------------------------------------------------------------
+  //| START SETTING UP ENVIRONMENT
+  //---------------------------------------------------------------------------
+  val debugReadingTime: Int = 100
 
   // Make an actor system
   val actorSystem: ActorSystem = ActorSystem("LennertBontinckSystem")
+
+  // Create some of the actors
+  val stockHouseManager: StockHouseManager = StockHouseManager()
+  val stockHouseManagerActor: ActorRef = actorSystem.actorOf(Props(new StockHouseManagerService(stockHouseManager)), name = "StockHouseManagerService")
+  val processingService: ActorRef = actorSystem.actorOf(Props(new ProcessingService(stockHouseManagerActor)), name = "processingService")
 
   // Make some addresses
   val address1: Address = Address(1.1, 1.1)
@@ -38,18 +47,14 @@ object Main extends App {
   val client8: Client = Client("Peter", address8, primeMember = false)
 
   // Create some client actors
-  val clientActor1: ActorRef = actorSystem.actorOf(Props(new ClientService(client1)), name = client1.name)
-  val clientActor2: ActorRef = actorSystem.actorOf(Props(new ClientService(client2)), name = client2.name)
-  val clientActor3: ActorRef = actorSystem.actorOf(Props(new ClientService(client3)), name = client3.name)
-  val clientActor4: ActorRef = actorSystem.actorOf(Props(new ClientService(client4)), name = client4.name)
-  val clientActor5: ActorRef = actorSystem.actorOf(Props(new ClientService(client5)), name = client5.name)
-  val clientActor6: ActorRef = actorSystem.actorOf(Props(new ClientService(client6)), name = client6.name)
-  val clientActor7: ActorRef = actorSystem.actorOf(Props(new ClientService(client7)), name = client7.name)
-  val clientActor8: ActorRef = actorSystem.actorOf(Props(new ClientService(client8)), name = client8.name)
-
-  // Create stock house manager and actor
-  val stockHouseManager: StockHouseManager = StockHouseManager()
-  val stockHouseManagerActor: ActorRef = actorSystem.actorOf(Props(new StockHouseManagerService(stockHouseManager, actorSystem)), name = "StockHouseManagerService")
+  val clientActor1: ActorRef = actorSystem.actorOf(Props(new ClientService(client1, processingService)), name = client1.name)
+  val clientActor2: ActorRef = actorSystem.actorOf(Props(new ClientService(client2, processingService)), name = client2.name)
+  val clientActor3: ActorRef = actorSystem.actorOf(Props(new ClientService(client3, processingService)), name = client3.name)
+  val clientActor4: ActorRef = actorSystem.actorOf(Props(new ClientService(client4, processingService)), name = client4.name)
+  val clientActor5: ActorRef = actorSystem.actorOf(Props(new ClientService(client5, processingService)), name = client5.name)
+  val clientActor6: ActorRef = actorSystem.actorOf(Props(new ClientService(client6, processingService)), name = client6.name)
+  val clientActor7: ActorRef = actorSystem.actorOf(Props(new ClientService(client7, processingService)), name = client7.name)
+  val clientActor8: ActorRef = actorSystem.actorOf(Props(new ClientService(client8, processingService)), name = client8.name)
 
   // Create some stock houses
   val stockHouse1: StockHouse = StockHouse(address1)
@@ -73,7 +78,7 @@ object Main extends App {
   stockHouseManagerActor ! AddStockHouse(stockHouse8) // sent a duplicate to test actor behaviour
 
   // Artificial pause for debug reading
-  Thread.sleep(5000)
+  Thread.sleep(debugReadingTime)
 
   // Create some Products to add
   val graphicsCardProduct: Product = Product("NVIDIA GTX 3080")
@@ -119,5 +124,18 @@ object Main extends App {
   stockHouseManagerActor ! AddProductToStockHouseDummy(stockHouse8, ProductWithQuantity(macbookProduct, 5))
 
   // Artificial pause for debug reading
-  Thread.sleep(5000)
+  Thread.sleep(debugReadingTime)
+
+  //---------------------------------------------------------------------------
+  //| END SETTING UP ENVIRONMENT
+  //---------------------------------------------------------------------------
+  //| START PLACING PURCHASES
+  //---------------------------------------------------------------------------
+
+  // Make some purchases
+  val productList1: List[ProductWithQuantity] = List(
+    ProductWithQuantity(macbookProduct, 2),
+    ProductWithQuantity(playstationProduct, 3))
+
+  clientActor1 ! PurchasePlaced(Purchase(productList1, client1))
 }

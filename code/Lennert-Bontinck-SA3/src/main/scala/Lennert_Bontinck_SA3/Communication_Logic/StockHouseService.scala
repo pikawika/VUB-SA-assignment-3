@@ -1,22 +1,34 @@
 package Lennert_Bontinck_SA3.Communication_Logic
 
 import Lennert_Bontinck_SA3.Business_Logic.{ProductWithQuantity, StockHouse}
-import Lennert_Bontinck_SA3.Communication_Logic.Messages.{AddProductToStockHouse, FillOrder}
-import akka.actor.{Actor, ActorLogging}
+import Lennert_Bontinck_SA3.Communication_Logic.Messages.{AddProductToStockHouse, FillOrder, InStock}
+import akka.actor.{Actor, ActorLogging, ActorRef}
+
+import java.util.UUID
 
 class StockHouseService(stockHouse: StockHouse) extends Actor with ActorLogging {
-  // TODO: A StockHouseService will manage a StockHouse and represent its communication logic.
-  //  The StockHouseService will take care of checking and sending product
-  //  availability in the stock when requested from the ProcessingService.
 
   /** Receive function which processes incoming messages (Actor specific function). */
   def receive: Receive = {
-    case FillOrder(product: List[ProductWithQuantity]) =>
-    // TODO: check availability of each product
-    //  if product is available with right quantity sent InStock message for that specific product
+    case FillOrder(requestedProductsWithQuantity: Set[ProductWithQuantity], corrID: UUID) =>
+      fillOrder(requestedProductsWithQuantity, corrID, sender())
 
     case AddProductToStockHouse(productWithQuantity: ProductWithQuantity) =>
       stockHouse.addProductWithQuantityToStock(productWithQuantity)
-      log.info("Added product: " + productWithQuantity.quantity + "x " + productWithQuantity.product.name)
+      log.info(determineNameOfStockHouseActor() + ": Added " + productWithQuantity.quantity + "x " + productWithQuantity.product.name)
+  }
+
+  /** Determines the name of an stock house actor by assuming unique address. */
+  private def determineNameOfStockHouseActor(): String = {
+    "StockHouse-X_" + stockHouse.address.x.toString + "-Y_" + stockHouse.address.y.toString
+  }
+
+  private def fillOrder(requestedProductsWithQuantity: Set[ProductWithQuantity], corrID: UUID, replyTo: ActorRef): Unit = {
+    // Get products from stock in business logic
+    val collectedProducts = stockHouse.provideAvailableProductsForPurchase(requestedProductsWithQuantity)
+    // Reply collected products
+    replyTo ! InStock(collectedProducts, determineNameOfStockHouseActor(), corrID)
+    // Log progress
+    log.info(determineNameOfStockHouseActor() + ": Checked available items in stock and provided them for client.")
   }
 }

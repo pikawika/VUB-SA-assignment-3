@@ -29,20 +29,6 @@ case class StockHouse(address: Address) {
   //| START STOCK MANAGEMENT FUNCTIONS
   //---------------------------------------------------------------------------
 
-  /** Function to remove specific quantity of a product from the stock.
-   * Returns boolean specifying if operation succeeded (might fail due to non available product/quantity). */
-  def removeProductWithQuantityFromStock(requestedProduct: ProductWithQuantity): Boolean = {
-    if (isProductWithQuantityInStock(requestedProduct)) {
-      val productFromStock = products.filter(_.product.name == requestedProduct.product.name).head
-      productFromStock.subtractQuantity(requestedProduct.quantity)
-      // Operation is successful
-      true
-    } else {
-      // Operation failed
-      false
-    }
-  }
-
   /** Function to add specific quantity of a product to the stock. */
   def addProductWithQuantityToStock(newProduct: ProductWithQuantity): Unit = {
     val productExists = products.exists(_.product.name == newProduct.product.name)
@@ -57,9 +43,42 @@ case class StockHouse(address: Address) {
     }
   }
 
-
   //---------------------------------------------------------------------------
   //| END STOCK MANAGEMENT FUNCTIONS
   //---------------------------------------------------------------------------
+  //| START ORDER FULFILLMENT MESSAGES
+  //---------------------------------------------------------------------------
+
+  def provideAvailableProductsForPurchase(requestedProductsWithQuantity: Set[ProductWithQuantity]): Set[ProductWithQuantity] = {
+    // Keep track of the products supplied for filling the order
+    var collectedProducts: Set[ProductWithQuantity] = Set()
+
+    for (requestedProduct <- requestedProductsWithQuantity) {
+      val isAvailableInStock: Boolean = products.exists(pwc => pwc.product.name == requestedProduct.product.name
+        && pwc.quantity > 0)
+
+      if(isAvailableInStock) {
+        val productFromStock: ProductWithQuantity = products.filter(_.product.name == requestedProduct.product.name).head
+        val canFullFilFully: Boolean = productFromStock.quantity - requestedProduct.quantity >= 0
+
+        if(canFullFilFully) {
+          // Collect the products by removing them from the stock
+          productFromStock.subtractQuantity(requestedProduct.quantity)
+          // Add requested product to collected products since it is fulfilled completely
+          collectedProducts = collectedProducts + requestedProduct
+        } else {
+          // Determine available amount
+          val availableQuantityToDeliver: Int = productFromStock.quantity
+          // Remove all available amount from stock, i.e. remove product from stock entirely
+          products = products - productFromStock
+          // Add requested product with lesser amount to collected products (partially fulfilled)
+          collectedProducts = collectedProducts + ProductWithQuantity(productFromStock.product, availableQuantityToDeliver)
+        }
+      }
+    }
+
+    // Return the collected products from the stock
+    collectedProducts
+  }
 
 }

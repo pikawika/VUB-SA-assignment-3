@@ -1,21 +1,41 @@
 package Lennert_Bontinck_SA3.Communication_Logic
 
 import Lennert_Bontinck_SA3.Business_Logic.{Client, Purchase}
-import Lennert_Bontinck_SA3.Communication_Logic.Messages.{OrderDelayed, OrderShipped}
-import akka.actor.Actor
+import Lennert_Bontinck_SA3.Communication_Logic.Ephemerals.ClientChildService
+import Lennert_Bontinck_SA3.Communication_Logic.Messages.{PurchaseConfirmed, PurchasePlaced}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 
-class ClientService(val client: Client) extends Actor {
+import java.util.UUID
+
+class ClientService(val client: Client, processingServiceActor: ActorRef) extends Actor with ActorLogging{
+
+  //---------------------------------------------------------------------------
+  //| START RECEIVE FUNCTION
+  //---------------------------------------------------------------------------
 
   /** Receive function which processes incoming messages (Actor specific function). */
   def receive: Receive = {
-    case OrderShipped() =>
-      //TODO
-    case OrderDelayed() =>
-    //TODO
+    case PurchasePlaced(purchase: Purchase) =>
+      // Use custom made private function of actor
+      purchasePlaced(purchase)
   }
 
-  def placePurchase(purchase: Purchase): Unit = {
+  //---------------------------------------------------------------------------
+  //| END RECEIVE FUNCTION
+  //---------------------------------------------------------------------------
+  //| START PURCHASE PLACING FUNCTIONS
+  //---------------------------------------------------------------------------
+
+  // DONE (?)
+  private def purchasePlaced(purchase: Purchase): Unit = {
+    // Add to business logic
     client.addPurchase(purchase)
-    // TODO: The ClientService will send the purchases to the ProcessingService.
+    // Create Ephemeral child responsible for further handling this purchase
+    val corrID = UUID.randomUUID()
+    val childActor = context.actorOf(Props(new ClientChildService(corrID)))
+    // Sent PurchaseConfirmed message to processing service actor with child as reply
+    processingServiceActor ! PurchaseConfirmed(purchase, corrID, childActor)
+    log.info("ClientService: received PurchasePlaced, registered purchase, created ephemeral child and sent PurchaseConfirmed.")
   }
+
 }
