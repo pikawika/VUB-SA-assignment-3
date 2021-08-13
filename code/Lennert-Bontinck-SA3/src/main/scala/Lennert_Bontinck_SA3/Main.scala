@@ -134,7 +134,7 @@ object Main extends App {
   // Make some purchases
   val productList1: List[ProductWithQuantity] = List(
     ProductWithQuantity(macbookProduct, 2),
-    ProductWithQuantity(playstationProduct, 100))
+    ProductWithQuantity(playstationProduct, 5))
 
   clientActor1 ! PurchasePlaced(Purchase(productList1, client1))
 }
