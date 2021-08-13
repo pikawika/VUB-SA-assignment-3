@@ -77,4 +77,11 @@ Below is the output of running the code for 7 orders of which some contain 5+ di
 
 This output is achieved by using displayAll = true.
 
-![Succesfull order processing: OrderShipped](screenshots/orderAll.png)
+![Succesfull order processing: many orders](screenshots/orderAll.png)
+
+### Prioritize prime clients
+
+Since the processing of messages is blazing fast on a new system with such small actors, there is no real time for the mailbox to get filled with messages. However, due to adding an artificial wait (sleeping thread) on some strategic places we can see the custom mailbox working in prioritzing messages from prime clients. Note that only some prime client messages should be prioritized, i.e. those that are in a mailbox where also requests from non prime members may be collected.
+
+![Succesfull order processing: priority mailbox](screenshots/primePriority.png)
+

@@ -2,6 +2,7 @@ package Lennert_Bontinck_SA3.Communication_Logic
 
 import Lennert_Bontinck_SA3.Business_Logic.{Address, ProductWithQuantity, StockHouse, StockHouseManager}
 import Lennert_Bontinck_SA3.Communication_Logic.Helper_Classes.NamedActor
+import Lennert_Bontinck_SA3.Communication_Logic.Messages.PrimeAlternatives.FindNearestStockHousesPrime
 import Lennert_Bontinck_SA3.Communication_Logic.Messages._
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 
@@ -26,6 +27,10 @@ class StockHouseManagerService(stockHouseManager: StockHouseManager) extends Act
       // use custom made private function inside actor
       findNearestStockHouses(address, replyTo, corrID, amountOfStockHouses)
 
+    case FindNearestStockHousesPrime(address: Address, replyTo: ActorRef, corrID: UUID, amountOfStockHouses: Int) =>
+      // use custom made private function inside actor
+      findNearestStockHouses(address, replyTo, corrID, amountOfStockHouses, isPrime = true)
+
     case AddStockHouse(newStockHouse: StockHouse) =>
       // Use custom made private function inside actor
       addStockHouse(newStockHouse)
@@ -46,7 +51,13 @@ class StockHouseManagerService(stockHouseManager: StockHouseManager) extends Act
   }
 
   /** Processes a FindNearestStockHouses message */
-  private def findNearestStockHouses(address: Address, replyTo: ActorRef, corrID: UUID, amountOfStockHouses: Int): Unit = {
+  private def findNearestStockHouses(address: Address,
+                                     replyTo: ActorRef,
+                                     corrID: UUID,
+                                     amountOfStockHouses: Int,
+                                     isPrime: Boolean = false): Unit = {
+    // Artificial wait to demonstrate Prime Priority by building up messages in mailbox
+    Thread.sleep(500)
     // Use business logic to find nearest stock houses
     val foundStockHouses: List[StockHouse] = stockHouseManager.findNearestStockHouses(address, amountOfStockHouses)
 
@@ -59,6 +70,12 @@ class StockHouseManagerService(stockHouseManager: StockHouseManager) extends Act
 
     // Reply found nearest stock houses
     replyTo ! NearestStockHousesFound(foundNamedActors.toList, corrID)
+
+    if(isPrime) {
+      log.info("!!!PRIME PRIORITY!!! StockHouseManagerService: processed FindNearestStockHouses message.")
+    } else {
+      log.info("StockHouseManagerService: processed FindNearestStockHouses message.")
+    }
   }
 
   /** Gets named actor object for provided stock house.

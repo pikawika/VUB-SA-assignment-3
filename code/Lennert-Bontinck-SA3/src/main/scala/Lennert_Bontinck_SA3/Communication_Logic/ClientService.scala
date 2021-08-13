@@ -2,13 +2,14 @@ package Lennert_Bontinck_SA3.Communication_Logic
 
 import Lennert_Bontinck_SA3.Business_Logic.{Client, Purchase}
 import Lennert_Bontinck_SA3.Communication_Logic.Ephemerals.ClientChildService
+import Lennert_Bontinck_SA3.Communication_Logic.Messages.PrimeAlternatives.PurchaseConfirmedPrime
 import Lennert_Bontinck_SA3.Communication_Logic.Messages.{PurchaseConfirmed, PurchasePlaced}
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 
 import java.util.UUID
 
 /** Actor for the managing communication of a client. */
-class ClientService(val client: Client, processingServiceActor: ActorRef) extends Actor with ActorLogging{
+class ClientService(val client: Client, processingServiceActor: ActorRef) extends Actor with ActorLogging {
 
   //---------------------------------------------------------------------------
   //| START RECEIVE FUNCTION
@@ -18,7 +19,7 @@ class ClientService(val client: Client, processingServiceActor: ActorRef) extend
   def receive: Receive = {
     case PurchasePlaced(purchase: Purchase) =>
       // Use custom made private function of actor
-      purchasePlaced(purchase)
+      purchasePlaced(purchase, client.primeMember)
   }
 
   //---------------------------------------------------------------------------
@@ -28,14 +29,18 @@ class ClientService(val client: Client, processingServiceActor: ActorRef) extend
   //---------------------------------------------------------------------------
 
   /** Function to process a PurchasePlaced message. */
-  private def purchasePlaced(purchase: Purchase): Unit = {
+  private def purchasePlaced(purchase: Purchase, isPrimeUser: Boolean = false): Unit = {
     // Add to business logic
     client.addPurchase(purchase)
     // Create ephemeral child responsible for further handling this purchase
     val corrID = UUID.randomUUID()
     val childActor = context.actorOf(Props(new ClientChildService(corrID)))
     // Sent PurchaseConfirmed message to processing service actor with ephemeral child as reply
-    processingServiceActor ! PurchaseConfirmed(purchase, corrID, childActor)
+    if(isPrimeUser) {
+      processingServiceActor ! PurchaseConfirmedPrime(purchase, corrID, childActor)
+    } else {
+      processingServiceActor ! PurchaseConfirmed(purchase, corrID, childActor)
+    }
     log.info("ClientService: received PurchasePlaced, registered purchase, created ephemeral child and sent PurchaseConfirmed.")
   }
 

@@ -2,6 +2,7 @@ package Lennert_Bontinck_SA3.Communication_Logic.Ephemerals
 
 import Lennert_Bontinck_SA3.Business_Logic.{ProductWithQuantity, Purchase}
 import Lennert_Bontinck_SA3.Communication_Logic.Helper_Classes.NamedActor
+import Lennert_Bontinck_SA3.Communication_Logic.Messages.PrimeAlternatives.FillOrderPrime
 import Lennert_Bontinck_SA3.Communication_Logic.Messages.{FillOrder, InStock, NearestStockHousesFound, OrderDelayed, OrderShipped}
 import akka.actor.{Actor, ActorLogging, ActorRef}
 
@@ -10,7 +11,8 @@ import java.util.UUID
 /** Ephemeral child actor for the processing service, is responsible for managing a singular purchase. */
 class ProcessingChildService(purchase: Purchase,
                              corrID: UUID,
-                             requestingClientActor: ActorRef) extends Actor with ActorLogging {
+                             requestingClientActor: ActorRef,
+                             isPrime: Boolean = false) extends Actor with ActorLogging {
 
   /** Keep a list of stock house actors that are not yet contacted for fulfilling order.
    * NOTE: use of var in actor might trigger a warning in IntelliJ,
@@ -46,7 +48,11 @@ class ProcessingChildService(purchase: Purchase,
     // Become the aggregating actor to collect all items from warehouses (second and final form of this actor)
     context.become(receiveAggregating)
     // Sent first FillOrder request to first found warehouse (nearest)
-    remainingStockHousesToGatherFrom.head.actorRef ! FillOrder(purchase.remainingProducts, corrID)
+    if(isPrime) {
+      remainingStockHousesToGatherFrom.head.actorRef ! FillOrderPrime(purchase.remainingProducts, corrID)
+    } else {
+      remainingStockHousesToGatherFrom.head.actorRef ! FillOrder(purchase.remainingProducts, corrID)
+    }
     log.info("ProcessingChildService " + corrID + ": Got nearest stock houses, became aggregating receiver and sent first FillOrder message.")
   }
 

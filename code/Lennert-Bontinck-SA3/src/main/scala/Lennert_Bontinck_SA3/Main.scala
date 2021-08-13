@@ -7,11 +7,6 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 
 object Main extends App {
 
-  // Todo: Additionally, your
-  //  Client class should include an attribute indicating whether a client has subscribed to
-  //  Prime services. Your implementation should prioritise purchases from clients that have
-  //  subscribed to Prime. Purchases from other clients should be processed normally
-
   //---------------------------------------------------------------------------
   //| START SETTING UP ENVIRONMENT
   //---------------------------------------------------------------------------
@@ -36,11 +31,11 @@ object Main extends App {
   val address8: Address = Address(8.8, 8.8)
 
   // Make some clients
-  val client1: Client = Client("Lennert", address1, primeMember = false)
+  val client1: Client = Client("Lennert", address1, primeMember = true)
   val client2: Client = Client("Bontinck", address2, primeMember = false)
   val client3: Client = Client("Joske", address3, primeMember = false)
   val client4: Client = Client("Willfried", address4, primeMember = false)
-  val client5: Client = Client("Coen", address5, primeMember = false)
+  val client5: Client = Client("Coen", address5, primeMember = true)
   val client6: Client = Client("Johan", address6, primeMember = false)
   val client7: Client = Client("Kris", address7, primeMember = false)
 
@@ -132,9 +127,9 @@ object Main extends App {
   // Make some purchases (7 in total with last having many products - all works as expected)
   // If you want to see the main flow in an easy manner, please configure the below variables
   // NOTE: only one bool may be true!
+  val displayAll: Boolean = true
   val displayOnlyASingleOrderShippedProcess: Boolean = false
   val displayOnlyASingleOrderDelayedProcess: Boolean = false
-  val displayAll: Boolean = true
 
 
   if (displayOnlyASingleOrderShippedProcess || displayAll) {
