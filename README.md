@@ -36,6 +36,9 @@ This is the GitHub repository for the third and last assignment of the Software 
 - Select Open as Project and select Trust Project.
 - The IntelliJ IDEA should build the build.sbt file providing the dependencies. If all base software was installed with the same versions as used for this assignment, it should provide the correct SDKs as well.
 - Rightclick on ```main```under ```src/main/scala/Lennert_Bontinck_SA3```, and select ```run Main```. The main file will now run which will process some requests.
+- NOTES:
+  - Some artificial pauses have been added to the code (sleeping threads) to demonstrate functionality. 
+  - The code doesn't terminate as some actors stay online to receive further potential messages, manual termination is required (as was also the case in WPO sessions)
 
 ## Validated output
 
