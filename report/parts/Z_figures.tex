@@ -1,0 +1,66 @@
+\chapter*{Extra figures}
+\label{ch:extra_figures}
+\addcontentsline{toc}{chapter}{Extra figures}
+
+To make the report more readable some figures are not provided directly in the text.
+These figures are provided here.
+
+\section*{Managing stock houses}
+
+\begin{figure}[H]
+     \centering
+     \begin{subfigure}[b]{0.9\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/addStockHouses.png}
+         \caption{The main loop adding stock houses.}
+         \label{fig:adding_stockhouse}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.9\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/addProducts.png}
+         \caption{The main loop adding products to the stock houses.}
+         \label{fig:adding_stock}
+     \end{subfigure}
+        \caption{The main loop managing the stock houses.}
+        \label{fig:managing_stockhouse}
+\end{figure}
+
+\section*{Purchase process}
+
+\begin{figure}[H]
+     \centering
+     \begin{subfigure}[b]{0.9\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/orderShipped.png}
+         \caption{A single purchase being processed successfully.}
+         \label{fig:single_shipped}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.9\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/orderDelayed.png}
+         \caption{A single purchase failing to be fulfilled.}
+         \label{fig:single_delayed}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.9\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/orderAll.png}
+         \caption{Many purchases with many different products being processed concurrently.}
+         \label{fig:purchase_all}
+     \end{subfigure}
+        \caption{The multiple variants of the demo behaviour available in the main loop.}
+        \label{fig:purchase_process}
+\end{figure}
+
+\section*{Custom priority mailbox}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/primePriority.png}
+    \captionsetup{width=0.8\linewidth}
+    \captionsetup{justification=centering}
+    \caption{Implementation of \texttt{PrimePriorityMailbox}. }
+    \label{fig:mailbox_implement}
+\end{figure}

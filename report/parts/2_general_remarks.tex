@@ -1,0 +1,46 @@
+\chapter{General remarks}
+\label{ch:general_remarks}
+
+%------------------------------------
+
+\section{Notes on the assignment}
+\label{sec:notes_on_ass}
+
+None of the assignments for the Software Architectures course were submitted in the first examination period due to personal reasons.
+Because of this, all of the code written for this assignment is written specifically for the second examination period.
+All code was written by using the course material and the online Akka documentation\footnote{\url{https://doc.akka.io/docs/akka/2.5.32/}}.
+
+%------------------------------------
+
+\section{Important design assumptions}
+\label{sec:design_assumptions}
+
+Whilst the assignment gave great details on which components should be created, there were some gaps in connecting these components.
+It was opted to create extra non-specified functionality of adding stock houses and products so that these gaps are filled realistically compared to hard-coding \texttt{ActorRef} lists and \texttt{ProductsWithQuantity} in stock.
+Sadly, this decision left no time to implement extra patterns such as a persistent business handshake pattern.
+
+%------------------------------------
+
+\section{Important files}
+\label{sec:important_files}
+
+All code written is available on the GitHub repository for this assignment \citep{github_project}. 
+Rights to this private GitHub repository can be granted upon request. 
+A copy of this GitHub repository is accompanied by this report.
+An overview of important files is given below:
+\begin{itemize}
+    \item \texttt{README.md}
+    \begin{itemize}
+        \item General information of the GitHub repository as well as some technical details about the used environment and how to run the project.
+        \item A section called \texttt{Validated output} where the main functionality is discussed informally by discussing some screenshots.
+    \end{itemize}
+    \item \texttt{assignment.pdf}, \texttt{Lennert-Bontinck-SA3.pdf} and \texttt{report/}
+    \begin{itemize}
+        \item The assignment PDF, this report and the source files of the report. A VUB themed \LaTeX{} template by \citet{latex_template} was used to create this report.
+    \end{itemize}
+    \item \texttt{code/Lennert-Bontinck-SA3/}
+    \begin{itemize}
+        \item The folder containing the code of the assignment solution.
+        \item Instructions on how to run the code are available in the \texttt{README.md} file.
+    \end{itemize}
+\end{itemize}
