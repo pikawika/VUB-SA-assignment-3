@@ -18,7 +18,7 @@ This is the GitHub repository for the third and last assignment of the Software 
 
 ## Important files and folders
 - [Assignment PDF](assignment.pdf)
-- [Report containing explanation on solution of the assignment](Lennert-Bontinck-SA2.pdf)
+- [Report containing explanation on solution of the assignment](Lennert-Bontinck-SA3.pdf)
 - [Written code folder](code/)
 
 ## Notes on the code
@@ -28,14 +28,15 @@ This is the GitHub repository for the third and last assignment of the Software 
 - For this project, the following version of base software are used (same as WPOs)
   - JRE and JDK 1.8.291
   - sbt 1.3.13
-- The sbt build will provide the required dependencies which are the same as the one from the last exercise session (11).
+- The sbt build will provide the required dependencies which are the same as the one from the last exercise session (session 11).
 
 ## Running the code
 
-- Open the build.sbt file available under code\Lennert-Bontinck-SA3\build.sbt with the IntelliJ IDEA.
-- Select Open as Project and select Trust Project.
+- Open the build.sbt file available under ```code\Lennert-Bontinck-SA3\build.sbt``` with the IntelliJ IDEA.
+- Select ```Open as Project``` and select ```Trust Project```.
 - The IntelliJ IDEA should build the build.sbt file providing the dependencies. If all base software was installed with the same versions as used for this assignment, it should provide the correct SDKs as well.
-- Rightclick on ```main```under ```src/main/scala/Lennert_Bontinck_SA3```, and select ```run Main```. The main file will now run which will process some requests.
+- Rightclick on ```main```under ```Lennert-Bontinck-SA3/src/main/scala/Lennert_Bontinck_SA3```, and select ```run Main```. The main file will now run which will run a demonstration of the messaging capabilities.
+  - It is possible to change the demonstration to show a certain scenario by editing some predifined boolean values. See ```displayAll```, ```displayOnlyASingleOrderShippedProcess```and ```displayOnlyASingleOrderDelayedProcess```on line 127 and following
 - NOTES:
   - Some artificial pauses have been added to the code (sleeping threads) to demonstrate functionality. 
   - The code doesn't terminate as some actors stay online to receive further potential messages, manual termination is required (as was also the case in WPO sessions)
