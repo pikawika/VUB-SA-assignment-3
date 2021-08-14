@@ -48,10 +48,11 @@ class ProcessingChildService(purchase: Purchase,
     // Become the aggregating actor to collect all items from warehouses (second and final form of this actor)
     context.become(receiveAggregating)
     // Sent first FillOrder request to first found warehouse (nearest)
+    val fillOrderMessage = FillOrder(purchase.remainingProducts, corrID)
     if(isPrime) {
-      remainingStockHousesToGatherFrom.head.actorRef ! FillOrderPrime(purchase.remainingProducts, corrID)
+      remainingStockHousesToGatherFrom.head.actorRef ! FillOrderPrime(fillOrderMessage)
     } else {
-      remainingStockHousesToGatherFrom.head.actorRef ! FillOrder(purchase.remainingProducts, corrID)
+      remainingStockHousesToGatherFrom.head.actorRef ! fillOrderMessage
     }
     log.info("ProcessingChildService " + corrID + ": Got nearest stock houses, became aggregating receiver and sent first FillOrder message.")
   }

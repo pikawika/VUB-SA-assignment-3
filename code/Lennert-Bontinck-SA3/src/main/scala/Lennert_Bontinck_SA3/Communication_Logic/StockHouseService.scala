@@ -15,8 +15,8 @@ class StockHouseService(stockHouse: StockHouse) extends Actor with ActorLogging 
     case FillOrder(requestedProductsWithQuantity: Set[ProductWithQuantity], corrID: UUID) =>
       fillOrder(requestedProductsWithQuantity, corrID, sender())
 
-    case FillOrderPrime(requestedProductsWithQuantity: Set[ProductWithQuantity], corrID: UUID) =>
-      fillOrder(requestedProductsWithQuantity, corrID, sender(), isPrime = true)
+    case FillOrderPrime(fillOrderMsg: FillOrder) =>
+      fillOrder(fillOrderMsg.productsWithQuantity, fillOrderMsg.corrID, sender(), isPrime = true)
 
     case AddProductToStockHouse(productWithQuantity: ProductWithQuantity) =>
       stockHouse.addProductWithQuantityToStock(productWithQuantity)
@@ -40,7 +40,7 @@ class StockHouseService(stockHouse: StockHouse) extends Actor with ActorLogging 
     // Reply collected products
     replyTo ! InStock(collectedProducts, determineNameOfStockHouseActor(), corrID)
     // Log progress
-    if(isPrime) {
+    if (isPrime) {
       log.info("!!!PRIME PRIORITY!!! " + determineNameOfStockHouseActor() + ": Checked available items in stock and provided them for client.")
     } else {
       log.info(determineNameOfStockHouseActor() + ": Checked available items in stock and provided them for client.")

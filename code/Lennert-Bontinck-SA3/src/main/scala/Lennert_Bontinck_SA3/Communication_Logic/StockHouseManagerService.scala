@@ -27,9 +27,13 @@ class StockHouseManagerService(stockHouseManager: StockHouseManager) extends Act
       // use custom made private function inside actor
       findNearestStockHouses(address, replyTo, corrID, amountOfStockHouses)
 
-    case FindNearestStockHousesPrime(address: Address, replyTo: ActorRef, corrID: UUID, amountOfStockHouses: Int) =>
+    case FindNearestStockHousesPrime(findNearestStockHousesMsg: FindNearestStockHouses) =>
       // use custom made private function inside actor
-      findNearestStockHouses(address, replyTo, corrID, amountOfStockHouses, isPrime = true)
+      findNearestStockHouses(findNearestStockHousesMsg.address,
+        findNearestStockHousesMsg.replyTo,
+        findNearestStockHousesMsg.corrID,
+        findNearestStockHousesMsg.amountOfStockHouses,
+        isPrime = true)
 
     case AddStockHouse(newStockHouse: StockHouse) =>
       // Use custom made private function inside actor
@@ -71,7 +75,7 @@ class StockHouseManagerService(stockHouseManager: StockHouseManager) extends Act
     // Reply found nearest stock houses
     replyTo ! NearestStockHousesFound(foundNamedActors.toList, corrID)
 
-    if(isPrime) {
+    if (isPrime) {
       log.info("!!!PRIME PRIORITY!!! StockHouseManagerService: processed FindNearestStockHouses message.")
     } else {
       log.info("StockHouseManagerService: processed FindNearestStockHouses message.")

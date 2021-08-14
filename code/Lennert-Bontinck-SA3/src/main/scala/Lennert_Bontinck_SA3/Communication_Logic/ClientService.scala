@@ -36,10 +36,11 @@ class ClientService(val client: Client, processingServiceActor: ActorRef) extend
     val corrID = UUID.randomUUID()
     val childActor = context.actorOf(Props(new ClientChildService(corrID)))
     // Sent PurchaseConfirmed message to processing service actor with ephemeral child as reply
+    val purchaseConfirmedMessage = PurchaseConfirmed(purchase, corrID, childActor)
     if(isPrimeUser) {
-      processingServiceActor ! PurchaseConfirmedPrime(purchase, corrID, childActor)
+      processingServiceActor ! PurchaseConfirmedPrime(purchaseConfirmedMessage)
     } else {
-      processingServiceActor ! PurchaseConfirmed(purchase, corrID, childActor)
+      processingServiceActor ! purchaseConfirmedMessage
     }
     log.info("ClientService: received PurchasePlaced, registered purchase, created ephemeral child and sent PurchaseConfirmed.")
   }
